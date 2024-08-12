@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import CreateForm from "../dashboard/_components/CreateForm";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -15,10 +17,25 @@ import {
   Smile,
 } from "lucide-react";
 import Image from "next/image";
+import axios from "axios";
 
 const reviews = [];
 
 const Hero = () => {
+  const [imageUrl, setImageUrl] = useState("");
+
+  const handlePredictClick = () => {
+    console.log("i'm here");
+    axios
+      .get("http://localhost:5003/run-model")
+      .then((response) => {
+        setImageUrl(response.data.imagePath);
+        console.log(response.data.message);
+      })
+      .catch((error) => {
+        console.error("模型运行出错:", error);
+      });
+  };
   return (
     <div id="top">
       <section className="bg-gray-900 text-white">
@@ -45,6 +62,30 @@ const Hero = () => {
               className="hidden md:block"
             />
           </div>
+        </div>
+        <Image
+          alt=""
+          src="/predict_result1.png"
+          width={600}
+          height={500}
+          className="mx-auto mt-8 max-w-xl sm:text-xl/relaxed"
+        />
+        <Image
+          alt=""
+          src={imageUrl}
+          width={600}
+          height={500}
+          className="mx-auto mt-8 max-w-xl sm:text-xl/relaxed"
+        />
+        <div className="mt-12 flex flex-wrap justify-center gap-4">
+          <button
+            onClick={handlePredictClick}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Predict Stock Price
+          </button>
+
+          {/* {imageUrl && <img src={imageUrl} alt="Prediction Result" />} */}
         </div>
       </section>
     </div>
